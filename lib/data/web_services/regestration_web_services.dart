@@ -1,21 +1,16 @@
 import 'package:dio/dio.dart';
-import 'package:ecommerce/constant/strings.dart';
+import 'package:ecommerce/data/web_services/dioSetUp/dio_client.dart';
 
 class LogInWebservices {
-  Dio? dio;
+  DioClient? _dioClient;
   LogInWebservices() {
-    BaseOptions options = BaseOptions(
-      baseUrl: baseurl,
-      receiveDataWhenStatusError: true,
-      connectTimeout: Duration(seconds: 20),
-      receiveTimeout: Duration(seconds: 20),
-    );
-    dio = Dio(options);
+       _dioClient =DioClient();
   }
   Future<Map<String, dynamic>?> login(String email, String password) async {
     try {
-      Response response = await dio!.post(
-        '/api/v1/auth/signin', //مسار تسجيل الدخول
+      print(_dioClient);
+      Response response = await _dioClient!.postData(
+        '/api/v1/auth/signin', 
         data: {
           'email': email,
           'password': password,
@@ -23,42 +18,31 @@ class LogInWebservices {
       );
 
       if (response.statusCode == 200) {
-        return response.data; // ارجاع البيانات كـ JSON
+        return response.data;
       } else {
-        // معالجة الحالة عندما يكون الكود غير 200
-        print('===========================Login failed with status: ${response.statusCode}====================');
+  
+        print('=========================== Login failed with status: ${response.statusCode} ============================');
         return null;
       }
-    } on DioError catch (e) {
-      // معالجة الأخطاء مثل timeout أو response error
-      if (e.response != null) {
-        print('Error: ${e.response?.data}');
-        print('Status code: ${e.response?.statusCode}');
-      } else {
-        print('==================Error sending request!==================');
-        print('Error: ${e.message}');
-      }
+    } catch (e) {
+      print('=========================== Error occurred: $e ===========================');
       return null;
     }
   }
 }
 
 class SignUpWebservices {
+  DioClient? _dioClient;
   Dio? dio;
   SignUpWebservices() {
-    BaseOptions options = BaseOptions(
-      baseUrl: baseurl,
-      receiveDataWhenStatusError: true,
-      connectTimeout: Duration(seconds: 20),
-      receiveTimeout: Duration(seconds: 20),
-    );
-    dio = Dio(options);
+  _dioClient =DioClient();
   }
   Future<Map<String, dynamic>?> Signup(String name, String email,String password,String rePassword,String phone) async {
-    try {
-      Response response = await dio!.post(
-        '/api/v1/auth/signup', //مسار تسجيل الدخول
-        data: {
+   
+     try {
+      Response response = await _dioClient!.postData(
+        '/api/v1/auth/signup',
+         data: {
           "name": name,
           "email": email,
           "password":password,
@@ -68,22 +52,16 @@ class SignUpWebservices {
       );
 
       if (response.statusCode == 200) {
-        return response.data; // ارجاع البيانات كـ JSON
+        return response.data; 
       } else {
         // معالجة الحالة عندما يكون الكود غير 200
-        print('==================Login failed with status: ${response.statusCode}==================');
+        print('=========================== SignUp failed with status: ${response.statusCode} ============================');
         return null;
       }
-    } on DioError catch (e) {
-      // معالجة الأخطاء مثل timeout أو response error
-      if (e.response != null) {
-        print('====================Error: ${e.response?.data}===================');
-        print('===============Status code: ${e.response?.statusCode}========================');
-      } else {
-        print('==================Error sending request!==================');
-        print('==================Error: ${e.message}==================');
-      }
+    } catch (e) {
+      print('=========================== Error occurred: $e ===========================');
       return null;
     }
+    }
   }
-}
+

@@ -1,72 +1,50 @@
 import 'package:dio/dio.dart';
-import 'package:ecommerce/constant/strings.dart';
+import 'package:ecommerce/data/web_services/dioSetUp/dio_client.dart';
 
 class CurdWebServices {
-  Dio? dio;
-
+ late DioClient _dioClient ;
+  String? userToken;
+ CurdWebServices({ this.userToken}){
+    _dioClient=DioClient() ;
+  }
+ void updateToken(String token) {
+    userToken = token;
+    _dioClient = DioClient();
+  }
   Future<Map<String, dynamic>?> ChangeLoggeduserdata(
-      {String? nameUpdate, String? NewUpdate, String? usertoken}) async {
-    BaseOptions options = BaseOptions(
-        baseUrl: baseurl,
-        receiveDataWhenStatusError: true,
-        connectTimeout: Duration(seconds: 20),
-        receiveTimeout: Duration(seconds: 20),
-        headers: {"token": usertoken});
-    dio = Dio(options);
-
-    try {
-      final response = await dio!
-          .put("/api/v1/users/updateMe/", data: {nameUpdate = nameUpdate});
+      {String? nameUpdate, dynamic newUpdate}) async {
+       Map<String,dynamic> data={
+          nameUpdate!:newUpdate
+       };
+      try {
+      Response response = await _dioClient.putData("/api/v1/users/updateMe/", data: data,headers:{"token":userToken} );
       if (response.statusCode == 200) {
+        print( "=====================*******=============${response.data}=================****================");
         return response.data;
       } else {
-        print(
-            '===========================Update failed with status: ${response.statusCode}====================');
+        print('=========================== Change logged user data failed with status: ${response.statusCode}====================');
         return null;
       }
-    } on DioError catch (e) {
-      if (e != null) {
-        print('Error: ${e.response?.data}');
-        print('Status code: ${e.response?.statusCode}');
-      } else {
-        print('==================Error sending request!==================');
-        print('Error: ${e.message}');
-      }
+    } catch (e) {
+      print('Error occurred: $e');
       return null;
     }
   }
-  Future<Map<String, dynamic>?> ChangeLoggedpass({String? currentPass, String? newPass,String? confirmNewpass, String? usertoken}) async{
-        BaseOptions options = BaseOptions(
-        baseUrl: baseurl,
-        receiveDataWhenStatusError: true,
-        connectTimeout: Duration(seconds: 20),
-        receiveTimeout: Duration(seconds: 20),
-        headers: {"token": usertoken});
-    dio = Dio(options);
-     try {
-      final response = await dio!
-          .put("/api/v1/users/changeMyPassword",
-           data: {
+  Future<Map<String, dynamic>?> ChangeLoggedpass({String? currentPass, String? newPass,String? confirmNewpass}) async{
+       try {
+      Response response = await _dioClient.putData("/api/v1/users/changeMyPassword",  data: {
             "currentPassword" : currentPass,
             "password":newPass,
             "rePassword":confirmNewpass
-          }
-          );
+          },headers:{"token":userToken});
       if (response.statusCode == 200) {
         return response.data;
       } else {
-        print(
-            '===========================Update failed with status: ${response.statusCode}====================');
+        print('=========================== Change logged user pass failed with status: ${response.statusCode}====================');
         return null;
       }
-    } on DioError catch (e) {
-      if (e != null) {
-        print('Error: ${e.response?.data}');
-        print('Status code: ${e.response?.statusCode}');
-      } else {
-        print('==================Error sending request!==================');
-        print('Error: ${e.message}');
-      }
+    } catch (e) {
+      print('Error occurred: $e');
       return null;
     }
   }

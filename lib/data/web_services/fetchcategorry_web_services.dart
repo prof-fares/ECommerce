@@ -1,41 +1,24 @@
 import 'package:dio/dio.dart';
-import 'package:ecommerce/constant/strings.dart';
+import 'package:ecommerce/data/web_services/dioSetUp/dio_client.dart';
 
 class FetchcategorryWebServices {
-  Dio? dio;
+  DioClient? _dioClient;
   FetchcategorryWebServices() {
-    BaseOptions options = BaseOptions(
-        connectTimeout: Duration(seconds: 30),
-        receiveTimeout: Duration(seconds: 30),
-        baseUrl: baseurl,
-        receiveDataWhenStatusError: true);
-        dio=Dio(options);
+    _dioClient = DioClient();
   }
-  Future <Map<String,dynamic>?> getCategory ()async{
-  try {
-
-      Response response= await dio!.get("/api/v1/categories");
-      if(response.statusCode==200){
-    
-          return response.data;
+  Future<Map<String, dynamic>?> getCategory() async {
+    try {
+      Response response = await _dioClient!.getData("/api/v1/categories");
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        print(
+            '=========================== Getcategory failed with status: ${response.statusCode}====================');
+        return null;
       }
-      else {
-       print('=========================== Getcategory failed with status: ${response.statusCode}====================');
-       return null;
-      }
-    
-  } on DioError catch (e) {
-    if(e!=null){
-     print('Error: ${e.response?.data}');
-        print('Status code: ${e.response?.statusCode}');
-    }
-    else{
-       print('==================Error sending request!==================');
-        print('Error: ${e.message}');
-      }
+    } catch (e) {
+      print('Error occurred: $e');
       return null;
     }
-   
   }
-  }
-
+}
