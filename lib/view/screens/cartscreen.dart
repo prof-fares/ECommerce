@@ -103,6 +103,7 @@ class CartScreen extends StatelessWidget {
                                 children: [
                                   Text(
                                     //test
+                                    //login
                                     "Total price",
                                     style: TextStyle(
                                         color: Colors.grey,
