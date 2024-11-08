@@ -102,6 +102,7 @@ class CartScreen extends StatelessWidget {
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text(
+                                    //test
                                     "Total price",
                                     style: TextStyle(
                                         color: Colors.grey,
